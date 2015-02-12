@@ -46,9 +46,22 @@ int main(){
 				
 			}
 			if(strcmp(currentCMDArray[0], "cd") == 0)
-			{	
-				chdir(currentCMDArray[1]);
-				addToList(currentCMD);
+			{
+				if(strstr(currentCMDArray[1], "~")!= NULL)
+				{
+					char* home = getenv("HOME");
+					char* temp = malloc(sizeof(char*));
+					strcpy(temp, home);
+					strcat(temp, currentCMDArray[1]);
+
+					chdir(home);
+					addToList(currentCMD);
+				}
+				else
+				{
+					chdir(currentCMDArray[1]);
+					addToList(currentCMD);
+				}
 			}
 
 			else if(!strcmp(currentCMDArray[0], "history")){
