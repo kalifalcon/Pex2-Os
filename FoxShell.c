@@ -3,16 +3,33 @@
 #include <string.h>
 #include <unistd.h>
 #include "list.h"
+#include <signal.h>
 
 node* list = NULL;
 void breakItDown(char*, char**);
 void execute(char* cmdArray[]);
 void addToList(char* currentCMDArray);
+
+
+
+void seghandler(int signum)
+{
+  puts("You broke it! Please restart and check your input");
+  fflush(stdout);
+  sleep(1);
+  exit(0);
+}
+
+
 int main(){
 	char input[64];
 	char cwd[512];
 	char *currentCMD;
 	char* currentCMDArray[8];
+
+	struct sigaction sa;
+  	sa.sa_handler = seghandler;
+  	sigaction(SIGSEGV,&sa,NULL);
 
 	while(strcmp(input, "exit") != 0)
 	{
@@ -67,6 +84,8 @@ int main(){
 void addToList(char* currentCMD)
 {
 	list = list_remove(list, currentCMD);
+
+
 	list = list_insert_tail(list, currentCMD);
 	if(list_length(list)>10)
 	{
